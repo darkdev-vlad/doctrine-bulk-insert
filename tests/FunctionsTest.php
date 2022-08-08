@@ -69,10 +69,24 @@ final class FunctionsTest extends TestCase
         static::assertEquals($expected, types($types, 2));
     }
 
-    public function testSql(): void
+    public function testInsertSql(): void
     {
         $sql = sql(new PostgreSqlPlatform(), new Identifier('foo'), static::DATASET);
         $expected = 'INSERT INTO foo (foo, bar, qux) VALUES (?, ?, ?), (?, ?, ?);';
+
+        static::assertEquals($expected, $sql);
+    }
+
+    public function testInsertIgnoreSql(): void
+    {
+        $sql = sql(
+            new PostgreSqlPlatform(),
+            new Identifier('foo'),
+            static::DATASET,
+            true
+        );
+
+        $expected = 'INSERT IGNORE INTO foo (foo, bar, qux) VALUES (?, ?, ?), (?, ?, ?);';
 
         static::assertEquals($expected, $sql);
     }
