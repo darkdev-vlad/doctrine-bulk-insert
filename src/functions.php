@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Franzose\DoctrineBulkInsert;
@@ -6,12 +7,14 @@ namespace Franzose\DoctrineBulkInsert;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 
-function sql(AbstractPlatform $platform, Identifier $table, array $dataset): string
+function sql(AbstractPlatform $platform, Identifier $table, array $dataset, bool $insertIgnore = false): string
 {
     $columns = quote_columns($platform, extract_columns($dataset));
+    $insert = $insertIgnore ? 'INSERT IGNORE' : 'INSERT';
 
     $sql = sprintf(
-        'INSERT INTO %s %s VALUES %s;',
+        '%s INTO %s %s VALUES %s;',
+        $insert,
         $table->getQuotedName($platform),
         stringify_columns($columns),
         generate_placeholders(count($columns), count($dataset))

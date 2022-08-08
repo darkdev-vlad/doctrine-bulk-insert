@@ -15,13 +15,13 @@ class Query
         $this->connection = $connection;
     }
 
-    public function execute(string $table, array $dataset, array $types = []): int
+    public function execute(string $table, array $dataset, array $types = [], bool $insertIgnore = false): int
     {
         if (empty($dataset)) {
             return 0;
         }
 
-        $sql = sql($this->connection->getDatabasePlatform(), new Identifier($table), $dataset);
+        $sql = sql($this->connection->getDatabasePlatform(), new Identifier($table), $dataset, $insertIgnore);
 
         if (method_exists($this->connection, 'executeStatement')) {
             return $this->connection->executeStatement($sql, parameters($dataset), types($types, count($dataset)));
